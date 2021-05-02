@@ -1,0 +1,15 @@
+version: '2'
+
+services:
+  jekyll:
+    image: jekyll/jekyll
+    command: jekyll serve --livereload
+    ports:
+      - 4000:4000
+      - 35729:35729
+    volumes:
+      - gem:/usr/gem
+      - .:/srv/jekyll
+
+volumes:
+  gem:
