@@ -9,6 +9,7 @@ services:
       - 35729:35729
     volumes:
       - gem:/usr/gem
+      - ./vendor/bundle/:/usr/local/bundle
       - .:/srv/jekyll
 
 volumes:
