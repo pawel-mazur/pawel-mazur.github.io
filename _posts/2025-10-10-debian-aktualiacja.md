@@ -1,9 +1,11 @@
 ---
-layout: post
 title: "Aktualizacja Debian 12.7 (bookworm) do 13.1 (trixie)"
+tags: debian
 ---
 
-## Sprawdzenie aktualnej wersji
+Obecnie aktualną wersją Debiana jest wersja 13.1 (trixi). Pora więc na aktualizacje.
+
+# Sprawdzenie aktualnej wersji
 
 ```
 debian@nomad-client:~$ cat /etc/os-release 
