@@ -3,7 +3,7 @@ version: '2'
 services:
   jekyll:
     image: jekyll/jekyll
-    command: jekyll serve --livereload
+    command: jekyll serve
     ports:
       - 4000:4000
       - 35729:35729
