@@ -1,6 +1,28 @@
 theme: minima
 
 title: Paweł Mazur
+author: Paweł Mazur
+description: Cześć! Nazywam się Paweł Mazur, a to moja strona stworzona za pomocą Jekyll!
 
 livereload: true
 future: true
+
+show_excerpts: true
+
+# Minima-specific settings (applicable to Minima v3 and above only)
+# -----------------------------------------------------------------
+#
+#  *All described config keys below should be nested under the top-level
+#   `minima` key.*
+#
+minima:
+   social_links:
+     - title: Github
+       icon: github
+       url: "https://github.com/pawel-mazur"
+     - title: Gitlab.com
+       icon: gitlab
+       url: "https://gitlab.com/pawel-mazur"
+     - title: Linkedin
+       icon: linkedin
+       url: "https://www.linkedin.com/in/pawe%C5%82-mazur-78b531a9"
