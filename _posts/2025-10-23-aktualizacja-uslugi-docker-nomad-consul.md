@@ -1,6 +1,6 @@
 ---
 title: "Aktualiacja usług Docker, Nomad oraz Consul w praktyce"
-tags: aktualizacja,docker, nomad, consul
+tags: aktualizacja docker nomad consul
 ---
 
 Aktualizacja usług to naturalna kolej rzeczy jeśli chcemy być na bieżąco z nowymi funkcjonalnościami, a co ważniejsze
