@@ -1,5 +1,5 @@
 ---
-title: Obsługa certyfikatów w środowisku Nomad z użyciem proxy Traefik
+title: Obsługa certyfikatów w środowisku Traefik
 ---
 
 Chcąc hostować dowolny kontener serwujący strony www, warto rozważyć wykorzystanie serwer proxy, będący
@@ -16,12 +16,10 @@ doskonale integruje się z tym rozwiązaniem i pozwala na zautomatyzowanie proce
 skonfigurowaniu resolvera [ACME](https://doc.traefik.io/traefik/reference/install-configuration/tls/certificate-resolvers/acme/).
 
 Na początku warto wspomnieć o kilku różnych trybach konfiguracji tj. dnsChallenge, tlsChallenge oraz httpChallenge, które
-zostały opisane w wyżej przytoczonej dokumentacji. Z uwagi iż moja domena została zarejstrowana u dostawcy, którego nie ma
-na liście wspieranych [dostawców DNS](https://go-acme.github.io/lego/dns/) na którym to kliencie [LEGO](https://go-acme.github.io/) 
-bezpośrednio została zautomatyzowana obsługa wpisów DNS, nie mogę bezpośrednio skorzystać z trybu dnsChallenge. W zwiążku z powyższym,
-zajmiemy się dzisiaj konfiguracją httpChallenge.
+zostały opisane w wyżej przytoczonej dokumentacji, która w zależności od trybu będzie różniła się sposobem którym
+zostanie zweryfikowane prawo do wygenerowania certyfikatu przez wystawcę.
 
-# Konfiguracja httpChallenge
+### Konfiguracja httpChallenge
 
 Na początku musimy zadbać aby nasza strona była dostępna na porcie 80 bezpośrednio z sieci internet. Na tym porcie usłga
 będzie wyrefikowała czy na naszym serwerze znajdzie się automatycznie wygenerowany klucz, który potwierdzi, że jesteśmy
@@ -44,14 +42,36 @@ entryPoints:
 certificatesResolvers:
   myresolver:
     acme:
-      # ...
+      email: admin@example.com
+      storage: /etc/traefik/acme.json
       httpChallenge:
-        email: admin@example.com
-        storage: /etc/traefik/acme.json
         entryPoint: web
 ```
+### Konfiguracja dnsChallenge
 
-# Konfiguracja routera
+Alternatywnym sposobem konfiguracji weryfikacji naszej domeny jest weryfikacja z użciem DNS. Wiąze się to z koniecznością,
+umieszczenia wpisu TXT w naszej domenie. Do automatyzacji tego procesu konieczny będzie dostęp do API naszego dostawcy domeny.
+Dla tego sposobu zostanie wykorzystany klient [LEGO](https://go-acme.github.io/lego), dla którego lista wspieranych dostawców jest dostępna [tutaj](https://go-acme.github.io/lego/dns/).
+Aby przejść przez ten proces skonfigurowałem i wykorzystam do tego pośrednika Cloudflare.
+
+W naszej konfiguracji tym razem powinna się znaleść następująca definicja resolvera:
+
+```
+certificatesResolvers:
+  myresolver:
+    acme:
+      email: admin@example.com
+      storage: /etc/traefik/acme.json
+      dnsChallenge:
+        provider: cloudflare
+```
+
+Dodatkowo nasza usługa Traefika powinna zostać uruchomiona z następującymi [zmiennymi środowiskowymi](https://go-acme.github.io/lego/dns/cloudflare/index.html#credentials). Aby się zautoryzować
+konieczne będzie przekazanie zmiennych `CF_API_EMAIL` oraz `CF_DNS_API_TOKEN` do kontenera. W moim wypadku token ten uzyskamy,
+przez wejście na strone [User API Tokens](https://dash.cloudflare.com/profile/api-tokens) i generując go z uprawnieniami 
+"`Edit zone DNS`". 
+
+## Konfiguracja routera
 
 W tym momecie możemy przejść do konfiguracji routera, tak aby nasz kontener otrzymał możliwosć generowania certyfikatu.
 Dla naszego kontenera musimy zdefioniować kolejno regułę dla której będzie obsługiwany np. `Host('domena')`, wskazać resolver `acme`,
