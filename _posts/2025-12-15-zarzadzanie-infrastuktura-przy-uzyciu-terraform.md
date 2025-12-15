@@ -110,3 +110,19 @@ If you ever set or change modules or backend configuration for Terraform,
 rerun this command to reinitialize your working directory. If you forget, other
 commands will detect it and remind you to do so if necessary.
 ```
+
+#### Konfiguracja szablonu
+
+Do tworzenia nowych maszyn będziemy posługiwali się bezpośrednio szablonem maszyny wirtualnej będącego naszą bazą.
+I tak obecnie stosowany standard zakłada wykorzystanie narzędzia Cloud-init. Jest ono ogólnie dostępne w większości 
+nowych dystrybucji i pozwala na inicjowanie konfiguracji maszyn w zakresie kart sieciowych, zasobów dyskowych, kluczy SSH
+czy instalowanych pakietów. 
+
+Więcej informacji znajdziemy bezpośrednio na stronie projektu [Cloud-init](https://cloudinit.readthedocs.io/), 
+dokumentacji Proxmox [Cloud-Init Support](https://pve.proxmox.com/wiki/Cloud-Init_Support),
+a także naszego dostawcy w Terraform [Cloud Init Guide](https://registry.terraform.io/providers/Telmate/proxmox/latest/docs/guides/cloud_init).
+
+Do stworzenia szablonu posłużymy się oficjalnym obrazem dla systemu Debian — [Debian Official Cloud Images](https://cloud.debian.org/images/cloud/).
+W tym celu pobierzemy obraz w formacie `.qcow2`, który następnie zaimportujemy w naszym Proxmoxie.
+
+![10-debian-cloud-init-download.png](/assets/images/terraform/10-debian-cloud-init-download.png)
