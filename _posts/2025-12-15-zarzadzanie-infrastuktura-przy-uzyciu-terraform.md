@@ -111,7 +111,7 @@ rerun this command to reinitialize your working directory. If you forget, other
 commands will detect it and remind you to do so if necessary.
 ```
 
-#### Konfiguracja szablonu
+#### Konfiguracja szablonu maszyny wirtualnej
 
 Do tworzenia nowych maszyn będziemy posługiwali się bezpośrednio szablonem maszyny wirtualnej będącego naszą bazą.
 I tak obecnie stosowany standard zakłada wykorzystanie narzędzia Cloud-init. Jest ono ogólnie dostępne w większości 
@@ -148,5 +148,243 @@ transferred 3.0 GiB of 3.0 GiB (100.00%)
 unused0: successfully imported disk 'local-lvm:vm-310-disk-0'
 ```
 
-Dysk ten musimy zamontować jeszcze do naszej maszyny. Na tym etapie warto upewnić się, że została zdefiniowana prawidłowa
+Dysk ten musimy zamontować jeszcze do naszej maszyny. Na tym etapie warto upewnić się, że została zdefiniowana odpowiednia
 kolejność bootowania. Na koniec pozostało przekonwertować wirtualną maszynę do szablonu.
+
+### Przygotowanie konfiguracji Terraform
+
+Na tym etapie przygotujemy konfigurację, którą posłużymy się do stworzenia naszej nowej maszyny przy użyciu Terraform. Do
+tego celu stworzymy plik `main.tf` w katalogu naszego projektu. W moim przypadku będzie to następująca definicja:
+
+```
+resource "proxmox_vm_qemu" "test" {
+  vmid        = 500
+  name        = "test"
+  target_node = "pve"
+  clone       = "Debian-13"
+  full_clone  = true
+  memory      = 2048
+  agent       = 0
+  tags        = "debian,terraform"
+  skip_ipv6   = true
+
+  # Cloud-Init configuration
+  ciuser       = "debian"
+  cipassword   = "debian"
+  ipconfig0    = "ip=192.168.1.20/32,gw=192.168.1.1"
+  nameserver   = "192.168.1.1"
+  searchdomain = ".*"
+
+  cpu {
+    cores = 2
+  }
+
+  disk {
+    slot    = "scsi0"
+    size    = "8G"
+    type    = "disk"
+    storage = "local-lvm"
+    format  = "raw"
+    discard = true
+  }
+
+  disk {
+    slot    = "scsi1"
+    type    = "cloudinit"
+    storage = "local-lvm"
+  }
+
+  network {
+    id        = 0
+    model     = "virtio"
+    bridge    = "vmbr0"
+    firewall  = false
+    link_down = false
+  }
+}
+```
+
+Na tym etapie powinniśmy sprawdzić, jaki jest plan z użyciem polecenia `terraform plan`.
+
+```
+$ terraform plan
+
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
++ create
+
+Terraform will perform the following actions:
+
+# proxmox_vm_qemu.test will be created
++ resource "proxmox_vm_qemu" "test" {
+    + additional_wait        = 5
+    + agent                  = 0
+    + agent_timeout          = 90
+    + automatic_reboot       = true
+    + balloon                = 0
+    + bios                   = "seabios"
+    + boot                   = (known after apply)
+    + bootdisk               = (known after apply)
+    + cipassword             = (sensitive value)
+    + ciupgrade              = false
+    + ciuser                 = "debian"
+    + clone                  = "Debian-13"
+    + clone_wait             = 10
+    + current_node           = (known after apply)
+    + default_ipv4_address   = (known after apply)
+    + default_ipv6_address   = (known after apply)
+    + define_connection_info = true
+    + description            = "Managed by Terraform."
+    + force_create           = false
+    + full_clone             = true
+    + hotplug                = "network,disk,usb"
+    + id                     = (known after apply)
+    + ipconfig0              = "ip=192.168.1.100/32,gw=192.168.1.1"
+    + kvm                    = true
+    + linked_vmid            = (known after apply)
+    + memory                 = 2048
+    + name                   = "test"
+    + nameserver             = "192.168.1.1"
+    + onboot                 = false
+    + protection             = false
+    + reboot_required        = (known after apply)
+    + scsihw                 = "lsi"
+    + searchdomain           = ".*"
+    + skip_ipv4              = false
+    + skip_ipv6              = true
+    + ssh_host               = (known after apply)
+    + ssh_port               = (known after apply)
+    + tablet                 = true
+    + tags                   = "debian,terraform"
+    + target_node            = "pve"
+    + unused_disk            = (known after apply)
+    + vm_state               = "running"
+    + vmid                   = 500
+
+    + cpu {
+        + cores   = 2
+        + limit   = 0
+        + numa    = false
+        + sockets = 1
+        + type    = "host"
+        + units   = 0
+        + vcores  = 0
+          }
+
+    + disk {
+        + backup               = true
+        + discard              = true
+        + format               = "raw"
+        + id                   = (known after apply)
+        + iops_r_burst         = 0
+        + iops_r_burst_length  = 0
+        + iops_r_concurrent    = 0
+        + iops_wr_burst        = 0
+        + iops_wr_burst_length = 0
+        + iops_wr_concurrent   = 0
+        + linked_disk_id       = (known after apply)
+        + mbps_r_burst         = 0
+        + mbps_r_concurrent    = 0
+        + mbps_wr_burst        = 0
+        + mbps_wr_concurrent   = 0
+        + passthrough          = false
+        + size                 = "8G"
+        + slot                 = "scsi0"
+        + storage              = "local-lvm"
+        + type                 = "disk"
+          }
+    + disk {
+        + backup               = true
+        + id                   = (known after apply)
+        + iops_r_burst         = 0
+        + iops_r_burst_length  = 0
+        + iops_r_concurrent    = 0
+        + iops_wr_burst        = 0
+        + iops_wr_burst_length = 0
+        + iops_wr_concurrent   = 0
+        + linked_disk_id       = (known after apply)
+        + mbps_r_burst         = 0
+        + mbps_r_concurrent    = 0
+        + mbps_wr_burst        = 0
+        + mbps_wr_concurrent   = 0
+        + passthrough          = false
+        + size                 = (known after apply)
+        + slot                 = "scsi1"
+        + storage              = "local-lvm"
+        + type                 = "cloudinit"
+          }
+
+    + network {
+        + bridge    = "vmbr0"
+        + firewall  = false
+        + id        = 0
+        + link_down = false
+        + macaddr   = (known after apply)
+        + model     = "virtio"
+          }
+
+    + smbios (known after apply)
+      }
+
+Plan: 1 to add, 0 to change, 0 to destroy.
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+Note: You didn't use the -out option to save this plan, so Terraform can't guarantee to take exactly these actions if you run "terraform apply" now.
+```
+
+W tym wypadku zostanie utworzona nowa maszyna o nazwie `test`, która otrzyma id o wartości `500`. Nie pozostaje nam nic
+innego jak utworzyć maszynę przy pomocy polecenia `terraform apply`. Całość będziemy musili zatwierdzić.
+
+```
+$ terraform apply
+
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
+  + create
+
+...
+
+Plan: 1 to add, 0 to change, 0 to destroy.
+
+Do you want to perform these actions?
+  Terraform will perform the actions described above.
+  Only 'yes' will be accepted to approve.
+
+  Enter a value: yes
+
+proxmox_vm_qemu.test: Creating...
+proxmox_vm_qemu.test: Still creating... [00m10s elapsed]
+proxmox_vm_qemu.test: Still creating... [00m20s elapsed]
+proxmox_vm_qemu.test: Still creating... [00m30s elapsed]
+proxmox_vm_qemu.test: Creation complete after 37s [id=pve/qemu/500]
+
+```
+
+Teraz możemy cieszyć się z nowo uruchomionej maszyny. Na koniec, jeśli nie będzie nam już potrzebna, warto zrobić porządek
+i przy pomocy polecenia `terraform destroy` skasować naszą infrastrukturę na podstawie wcześniej przygotowanej definicji.
+Tym razem również otrzymamy podgląd wszelkich zmian i ostatecznie będziemy musieli potwierdzić skasowanie całej infrastuktury.
+
+```
+$ terraform destroy
+proxmox_vm_qemu.test: Refreshing state... [id=pve/qemu/500]
+
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
+  - destroy
+
+...
+
+Plan: 0 to add, 0 to change, 1 to destroy.
+
+Do you really want to destroy all resources?
+  Terraform will destroy all your managed infrastructure, as shown above.
+  There is no undo. Only 'yes' will be accepted to confirm.
+
+  Enter a value: yes
+
+proxmox_vm_qemu.test: Destroying... [id=pve/qemu/500]
+proxmox_vm_qemu.test: Destruction complete after 2s
+```
+
+# Podsumowanie
+
+Terraform to narzędzie, które pozwoli nam na uporządkowanie definicji naszej infrastruktury, co przełoży się również na jej
+odpowiednią organizację. Tak przygotowana konfiguracja może też równie dobrze tworzyć jakże istotną dokumentację.
