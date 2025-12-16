@@ -120,25 +120,26 @@ czy instalowanych pakietów.
 
 Więcej informacji znajdziemy bezpośrednio na stronie projektu [Cloud-init](https://cloudinit.readthedocs.io/), 
 dokumentacji Proxmox [Cloud-Init Support](https://pve.proxmox.com/wiki/Cloud-Init_Support),
-a także naszego dostawcy w Terraform [Cloud Init Guide](https://registry.terraform.io/providers/Telmate/proxmox/latest/docs/guides/cloud_init).
+a także naszego dostawcy w Terraform [Cloud Init Guide](https://registry.terraform.io/providers/Telmate/proxmox/latest/docs/guides/cloud_init). 
+Dokładne informacje jak należy stworzyć szablon naszej maszyny, znajdziemy na stronie [Cloud-Init Getting Started](https://registry.terraform.io/providers/Telmate/proxmox/latest/docs/guides/cloud-init%2520getting%2520started).
 
-Do stworzenia szablonu posłużymy się oficjalnym obrazem dla systemu Debian — [Debian Official Cloud Images](https://cloud.debian.org/images/cloud/).
-W tym celu pobierzemy obraz w formacie `.qcow2`, który następnie zaimportujemy w naszym Proxmoxie.
+Do jego utworzenia posłużymy się oficjalnym obrazem dla systemu Debian — [Debian Official Cloud Images](https://cloud.debian.org/images/cloud/).
+W tym celu pobierzemy obraz [`debian-13-generic-arm64.qcow2`](https://cloud.debian.org/images/cloud/trixie/latest/debian-13-generic-arm64.qcow2), który następnie zaimportujemy w naszym Proxmoxie.
 
 ![10-debian-cloud-init-download.png](/assets/images/terraform/10-debian-cloud-init-download.png)
 
 Po pobraniu obrazu powinniśmy stworzyć nową maszynę, do której następnie zaimportujemy pobrany dysk w formacie `.qcow2`.
-Następnie nalży wykonać import dysku poleceniem `qm disk import` wskazując kolejno `<vmid>` -> Id maszyny,
-`<source>` -> ścieżkę wskazującą obraz, `<storage>` -> storage do którego zostanie zaimportowany obraz.
+Następnie należy wykonać import dysku poleceniem `qm disk import` wskazując kolejno `<vmid>` — Id naszej maszyny,
+`<source>` — ścieżkę wskazującą obraz, `<storage>` — storage, do którego zostanie zaimportowany obraz.
 
 ```
-~# qm disk import 310 /var/lib/vz/import/debian-13-nocloud-amd64.qcow2 local-lvm 
-importing disk '/var/lib/vz/import/debian-13-nocloud-amd64.qcow2' to VM 310 ...
-  Logical volume "vm-310-disk-0" created.
+# root@pve:~# qm disk import 310 /var/lib/vz/import/debian-13-generic-amd64.qcow2 local-lvm 
+importing disk '/var/lib/vz/import/debian-13-generic-amd64.qcow2' to VM 310 ...
+  Logical volume "vm-310-disk-1" created.
 transferred 0.0 B of 3.0 GiB (0.00%)
-transferred 31.0 MiB of 3.0 GiB (1.01%)
-transferred 61.7 MiB of 3.0 GiB (2.01%)
-transferred 92.8 MiB of 3.0 GiB (3.02%)
+transferred 30.7 MiB of 3.0 GiB (1.00%)
+transferred 61.4 MiB of 3.0 GiB (2.00%)
+transferred 92.5 MiB of 3.0 GiB (3.01%)
 ...
 transferred 3.0 GiB of 3.0 GiB (98.77%)
 transferred 3.0 GiB of 3.0 GiB (99.78%)
@@ -147,5 +148,5 @@ transferred 3.0 GiB of 3.0 GiB (100.00%)
 unused0: successfully imported disk 'local-lvm:vm-310-disk-0'
 ```
 
-Dysk ten musimy zamontować jeszcze do naszej maszyny. Na tym etapie warto upewnić się, że została zdefioniowana prawidłowa
-kolejność bootowania dysków. Na koniec pozostało przekonwertować wirtualną maszynę do szablonu.
+Dysk ten musimy zamontować jeszcze do naszej maszyny. Na tym etapie warto upewnić się, że została zdefiniowana prawidłowa
+kolejność bootowania. Na koniec pozostało przekonwertować wirtualną maszynę do szablonu.
