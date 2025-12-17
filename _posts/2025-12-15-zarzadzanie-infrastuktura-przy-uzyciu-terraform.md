@@ -333,7 +333,7 @@ Note: You didn't use the -out option to save this plan, so Terraform can't guara
 ```
 
 W tym wypadku zostanie utworzona nowa maszyna o nazwie `test`, która otrzyma id o wartości `500`. Nie pozostaje nam nic
-innego jak utworzyć maszynę przy pomocy polecenia `terraform apply`. Całość będziemy musili zatwierdzić.
+innego jak utworzyć maszynę przy pomocy polecenia `terraform apply`. Całość będziemy musieli zatwierdzić.
 
 ```
 $ terraform apply
@@ -361,7 +361,7 @@ proxmox_vm_qemu.test: Creation complete after 37s [id=pve/qemu/500]
 
 Teraz możemy cieszyć się z nowo uruchomionej maszyny. Na koniec, jeśli nie będzie nam już potrzebna, warto zrobić porządek
 i przy pomocy polecenia `terraform destroy` skasować naszą infrastrukturę na podstawie wcześniej przygotowanej definicji.
-Tym razem również otrzymamy podgląd wszelkich zmian i ostatecznie będziemy musieli potwierdzić skasowanie całej infrastuktury.
+Tym razem również otrzymamy podgląd wszelkich zmian i ostatecznie będziemy musieli potwierdzić skasowanie całej infrastruktury.
 
 ```
 $ terraform destroy

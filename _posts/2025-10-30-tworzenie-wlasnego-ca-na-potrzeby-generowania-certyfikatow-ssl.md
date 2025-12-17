@@ -1,20 +1,20 @@
 ---
-title: "Tworzenie własnego CA na potrzeby generowania certyfikatow dla stron www"
+title: "Tworzenie własnego CA na potrzeby generowania certyfikatów dla stron www"
 tags: web ca ssl tls https
 ---
 
 Przy hostowaniu stron w sieci domowej, z pewnością przyda się możliwość udostępnienia ich z przy wykorzystaniu
-protokołu HTTPs. Żeby osiągnąć ten cel, koniecznym jest dostarczenie certyfikatu TLS, z użyciem którego nasza komunikacja
-bedzie szyfrowana. Standardowo dla każdej ze stron należało by zakupić taki certyfikat u zaufanego dostawcy. Alternatywnie
-możemy stworzyć własne CA z użyciem którego będziemy podpisywać używane certyfikaty, jednak konieczne będzie dodanie go
-bazy zaufanych CA, na każdym z użądzeń na którym będziedziemy chcieli nawiązać komunikację z naszą stroną.
+protokołu HTTPs. Żeby osiągnąć ten cel, koniecznym jest dostarczenie certyfikatu TLS, z którego użyciem nasza komunikacja
+będzie szyfrowana. Standardowo dla każdej ze stron należałoby zakupić taki certyfikat u zaufanego dostawcy. Alternatywnie
+możemy stworzyć własne CA, z którego użyciem będziemy podpisywać używane certyfikaty, jednak konieczne będzie dodanie go
+bazy zaufanych CA, na każdym z urządzeń, na którym będziemy chcieli nawiązać komunikację z naszą stroną.
 
 Do wygenerowania certyfikatu posłużę się artykułem zamieszczonym na stronie [Generate an Azure Application Gateway self-signed certificate with a custom root CA](https://learn.microsoft.com/en-us/azure/application-gateway/self-signed-certificates),
 a także [How to create a valid self signed SSL Certificate?](https://www.patreon.com/posts/109937722).
 
 # Tworzenie CA
 
-W pierwszym kroku musimy przgotować nasze CA, zrobimy to przy pomocy oprogramowania [OpenSSL](https://www.openssl.org/).
+W pierwszym kroku musimy przygotować nasze CA, zrobimy to przy pomocy oprogramowania [OpenSSL](https://www.openssl.org/).
 
 ```bash
 $ openssl genrsa -aes256 -out ca-key.pem 4096
@@ -22,8 +22,8 @@ Enter PEM pass phrase:
 Verifying - Enter PEM pass phrase:
 ```
 
-W tym momencie mamy jedynie wygenerowany klucz RSA, z użyciem którego wygenerujemy klucz naszego CA.
-Bedziemy musieli odpowiedzieć na kilka zadanych pytań. 
+W tym momencie mamy jedynie wygenerowany klucz RSA, z którego użyciem wygenerujemy klucz naszego CA.
+Będziemy musieli odpowiedzieć na kilka zadanych pytań. 
 
 ```bash
 $ openssl req -new -x509 -sha256 -days 3650 -key ca-key.pem -out ca.pem
@@ -44,7 +44,7 @@ Common Name (e.g. server FQDN or YOUR name) []:www.pmazur.pl
 Email Address []:
 ```
 
-W tym moemecie możemy podjerzeć informacje zawarte w certyfikacie naszego CA.
+W tym momencie możemy podejrzeć informacje zawarte w certyfikacie naszego CA.
 
 ```bash
 $ openssl x509 -in ca.pem -text -noout 
@@ -256,14 +256,14 @@ Certificate:
 # Wykorzystanie certyfikatu
 
 Tak przygotowany certyfikat należy skonfigurować w aplikacji odpowiedzialnej za komunikację HTTPs. W moim przypadku
-zostanie skonfigurowana usługa Proxmox. Szczegóły zostały opisane w dokumetacji [Certificate Management](https://pve.proxmox.com/wiki/Certificate_Management).
+zostanie skonfigurowana usługa Proxmox. Szczegóły zostały opisane w dokumentacji [Certificate Management](https://pve.proxmox.com/wiki/Certificate_Management).
 
 ![ssl-cert.png](/assets/images/ssl-cert.png)
 
 # Instalacja CA
 
-Aby nasze CA było zaufane, na wszystkich użądzeniach klienckich należy zainstalować je w systemie. W przypadku Debiana zrobimy to umiesczająć plik CA w katalogu `/usr/local/share/ca-certificates/`
-i aktualizujac Cert Store.
+Aby nasze CA było zaufane, na wszystkich urządzeniach klienckich należy zainstalować je w systemie. W przypadku Debiana
+zrobimy to umieszczając plik CA w katalogu `/usr/local/share/ca-certificates/` i aktualizując Cert Store.
 
 ```bash
 $ sudo cp ca.pem /usr/local/share/ca-certificates/lan-ca.crt
