@@ -1,15 +1,15 @@
 ---
-title: "Aktualiacja usług Docker, Nomad oraz Consul w praktyce"
+title: "Aktualizacja usług Docker, Nomad oraz Consul w praktyce"
 tags: aktualizacja docker nomad consul
 ---
 
-Aktualizacja usług to naturalna kolej rzeczy jeśli chcemy być na bieżąco z nowymi funkcjonalnościami, a co ważniejsze
-z naprawionymi błędami i poprawkami bezpieczeństawa celem wyeleminiowania podatności. Jako kolejny krok zw. z aktualizacją systemu,
+Aktualizacja usług to naturalna kolej rzeczy, jeśli chcemy być na bieżąco z nowymi funkcjonalnościami, a co ważniejsze
+z naprawionymi błędami i poprawkami bezpieczeństwa celem wyeliminowania podatności. Jako kolejny krok zw. z aktualizacją systemu,
 warto więc też zaktualizować wykorzystywane usług, tym razem będzie środowisko DevOps.
 
-# Aktualiazacja repozytoriów
+# Aktualizacja repozytoriów
 
-Przed aktualizacja w środowisku Debian należy zaktualizować informację o dostępnych paczkach do popbrania. Zrobimy to
+Przed aktualizacją w środowisku Debian należy zaktualizować informację o dostępnych paczkach do pobrania. Zrobimy to
 poleceniem `apt update` lub `apt-get update`. W moim wypadku wyglądało to następująco.
 
 ```
@@ -32,14 +32,14 @@ Reading package lists... Done
 
 # Aktualizacja Docker
 
-Na czas aktualizacji usługi Docker należy zaplanowąć okno serwisowe. W tym czasie usługa ta zostanie zrestartowana,
-a wszystkie uruchomione kontenery zostaną zatrzyman i uruchomione ponownie po zakończonej aktualizacji.
+Na czas aktualizacji usługi Docker należy zaplanować okno serwisowe. W tym czasie usługa ta zostanie zrestartowana,
+a wszystkie uruchomione kontenery zostaną zatrzymane i uruchomione ponownie po zakończonej aktualizacji.
 
 Sama procedura nie różni się od procesu instalacji, co zostało opisane w oficjalnej dokumentacji [Upgrade Docker Engine](https://docs.docker.com/engine/install/ubuntu/#upgrade-docker-engine).
 
-Przed aktualizacją warto przejrzeć changelog i zweryfikować jakie zmiany zostały wprowadzone w kolejnej wersji. Można go znaleźć tutaj [Docker Engine version 28 release notes](https://docs.docker.com/engine/release-notes/).
+Przed aktualizacją warto przejrzeć changelog i zweryfikować, jakie zmiany zostały wprowadzone w kolejnej wersji. Można go znaleźć tutaj [Docker Engine version 28 release notes](https://docs.docker.com/engine/release-notes/).
 
-Przed aktualizacja sprawdzimy obecnie zainstalowaną wersję narzędzia Docker.
+Następnie sprawdzimy obecnie zainstalowaną wersję narzędzia Docker.
 
 ```
 debian@vps-3312ca9a:~$ docker -v
@@ -118,7 +118,7 @@ TriggeredBy: ● docker.socket
 
 # Aktualizacja Nomad
 
-W celu aktualizacji środowiska Nomad warto zacząć od przejścia oficjalnej dokumetacji w tym temacie. Znajdziemy ją tutaj 
+W celu aktualizacji środowiska Nomad warto zacząć od przejścia oficjalnej dokumentacji na ten temat. Znajdziemy ją tutaj 
 [Upgrade Nomad](https://developer.hashicorp.com/nomad/docs/upgrade).
 
 Podobnie jak w przypadku Dockera, powinniśmy zapoznać się z ostatnimi zmianami. Informacje te są dostępne na stronie 
@@ -158,7 +158,7 @@ Installing new version of config file /usr/lib/systemd/system/nomad.service ...
 Processing triggers for man-db (2.11.2-2) ...
 ```
 
-W tym czasie uległa restartowi usługa `nomad` na hoście na którym przeprowadzamy aktualizację. Wg. `journalctl`,
+W tym czasie uległa restartowi usługa `nomad` na hoście, na którym przeprowadzamy aktualizację. Wg. `journalctl`,
 otrzymałem następujące informacje.
 
 ```
@@ -191,7 +191,7 @@ Oct 23 03:55:24 vps-3312ca9a systemd[1]: Stopped nomad.service - Nomad.
 Oct 23 03:55:24 vps-3312ca9a systemd[1]: nomad.service: Consumed 4.845s CPU time.
 ```
 
-Potwierdzienie statusu uruchomionej usługi:
+Potwierdzenie statusu uruchomionej usługi:
 
 ```
 debian@vps-3312ca9a:~$ sudo service nomad status
@@ -246,7 +246,7 @@ Podobnie jak wcześniej warto zapoznać się z ostatnimi zmianami, ich lista jes
 
 Oficjalna dokumentacja, podobnie jak wypadku Nomada, zaznacza, że aktualizacja powinna być wykonana maksymalnie pomiędzy dwoma wersjami typu `minor`.
 
-Listę dostępnych wersji sprawdzimy poleceniam `apt list -a consul`:
+Listę dostępnych wersji sprawdzimy poleceniem `apt list -a consul`:
 
 ```
 debian@vps-3312ca9a:~$ apt list -a consul
@@ -276,7 +276,7 @@ consul/bookworm 1.17.1-1 amd64
 consul/bookworm 1.17.0-1 amd64
 ```
 
-Całość sprowadza się do wykonania polecenia w moim wypadku będize to aktualizacja `v1.17.1` -> `v1.19.0` -> `v1.21.5`.
+Całość sprowadza się do wykonania polecenia w moim wypadku będzie to aktualizacja `v1.17.1` -> `v1.19.0` -> `v1.21.5`.
 
 ```
 debian@vps-3312ca9a:~$ sudo apt install consul=1.19.0-1
@@ -297,8 +297,8 @@ Unpacking consul (1.19.0-1) over (1.17.1-1) ...
 Setting up consul (1.19.0-1) ...
 ```
 
-Podczas drugiej aktualizacji otrzymałem informacje o zmianach w pliki konfiugracji `consul.hcl`. Zmiany są kosmetyczne i
-modyfikują jednie adres dokumentacji w komentarzach. Wybrałem pozostanie przy dotychczasowej wersji konfiguracji.
+Podczas drugiej aktualizacji otrzymałem informacje o zmianach w pliki konfiguracji `consul.hcl`. Zmiany są kosmetyczne i
+modyfikują jednie adres dokumentacji w komentarzach. Zdecydowałem pozostać przy dotychczasowej wersji konfiguracji.
 
 ```
 Configuration file '/etc/consul.d/consul.hcl'
@@ -320,7 +320,7 @@ consul is already the newest version (1.21.5-1).
 0 upgraded, 0 newly installed, 0 to remove and 10 not upgraded.
 ```
 
-Po aktualizacji możemy potwierdzić jesze zainstalowaną wersję consula.
+Po aktualizacji możemy potwierdzić jeszcze zainstalowaną wersję aplikacji Consul.
 
 ```
 debian@vps-3312ca9a:~$ consul -v
@@ -349,7 +349,7 @@ debian@vps-3312ca9a:~$ sudo service consul status
 # Blokada wersji
 
 Aby uniknąć przypadkowej aktualizacji pakietów podczas uruchomienia polecenia `apt upgrade`, możemy zablokować aktualizację 
-poszczególnych pakietów. Zrobimy to poleceniem `apt-mark hold`. W moim przypadku będize to wyglądało następująco.
+poszczególnych pakietów. Zrobimy to poleceniem `apt-mark hold`. W moim przypadku będzie to wyglądało następująco.
 
 ```
 debian@vps-3312ca9a:~$ sudo apt-mark hold docker docker-ce nomad consul
@@ -373,4 +373,4 @@ nomad
 
 Aktualizacja narzędzi przeszła bezproblemowo i nie wymagała dużych nakładów pracy. Warto więc o tym pamiętać i cyklicznie 
 wykonać aktualizację w zaplanowanych oknach serwisowych. Proces ten można by usprawnić i wykorzystać
-m. in. [Ansible](https://docs.ansible.com/) jako narzędzie do automatyzacji.
+m.in. [Ansible](https://docs.ansible.com/) jako narzędzie do automatyzacji.

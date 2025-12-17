@@ -175,8 +175,7 @@ xz-utils/oldstable,oldstable-security 5.4.1-1 amd64 [upgradable from: 5.4.1-0.2]
 
 ## Aktualizacja paczek
 
-Podczas aktualizacji zostanie zrestartowana usługa docker, co spowoduje ponowne uruchomienie kontenerów. Usługa Nomad oraz Consul powinna zostać zakutalizowana do najnowszej wersji bez problemów. Dodatkowo zostanie zaktualizowany kernel, który wymagać będzie restartu maszyny.
-
+Podczas aktualizacji zostanie zrestartowana usługa docker, co spowoduje ponowne uruchomienie kontenerów. Usługa Nomad oraz Consul powinna zostać zaktualizowana do najnowszej wersji bez problemów. Dodatkowo zostanie zaktualizowany kernel, który wymagać będzie restartu maszyny.
 
 ```
 debian@nomad-client:~$ sudo apt upgrade
@@ -223,7 +222,7 @@ done.
 
 ```
 
-## Sprawdznie wersji Debiana
+## Sprawdzanie wersji Debiana
 
 Po aktualizacji system został podniesiony do wersji 12.12, co jest wymagane przy przejściu na wersję 13 (trixie).
 
