@@ -43,6 +43,38 @@ Po zalogowaniu się do panelu otrzymujemy podsumowanie na następującym dashboa
 
 ![34-dashboard.png](/assets/images/netbox/34-dashboard.png)
 
+# Dokumentacja
 
+Po przejrzeniu listy dostępnych obiektów postanowiłem je wyczyścić poprzez ręczne kasowanie danych z poziomu interfejsu
+użytkownika. Część z tych rekordów wymagała także skasowania rekordów zależnych, a ja mogę przejść do właściwej dokumentacji
+mojej sieci.
+
+#### Gałęzie
+
+Netbox jako narzędzie pozwala na pracę na branchach, pozwalających rozwój infrastuktury i wdrożenie wielu zmian do głownej
+bazy jako całości. Jak mówi dokumentacja [NetBox Branching](https://netboxlabs.com/docs/extensions/branching/), mechanizm
+ten opiera się o kncept pracy z repozytoriami [git](https://git-scm.com/). Na swoje potrzeby tworzę eksperymantalny brach
+z przykładową dokumentacją, który nazwę `Demo`.
+
+![36-branch.png](/assets/images/netbox/36-branch.png)
+
+#### Adresy IP
+
+Po przejściu do zakładki IPAM, w części [IP Addresses](https://netboxlabs.com/docs/netbox/models/ipam/ipaddress/), mamy
+możliwość udokumentowania wykorzystywanych w naszej sieci adresów IP v4/v6. I tak dla wprowadzonego rekordu podajemy
+sam adres w notacji z maską. Możemy wskazać jego status, określić przeznaczenie czy nawet powiązać z konfiguracją konkretnego
+urządzenia w naszej sieci. Dodatkowo na tym ekranie wskażemy także, pod jaką nazwą DNS będzie dostępny dany serwer.
+
+![38-branch.png](/assets/images/netbox/38-address.png)
+
+#### Maszyny wirtualne
+
+Aby udokumentować uruchomione maszyny wirtualne, zrobimy to w sekcji [Virtual Machines](https://netboxlabs.com/docs/netbox/models/virtualization/virtualmachine/).
+Na początku będziemy musieli skonfigurować odpowiedni klaster, na który maszyny będą uruchomione. W tym momencie dodając
+nową maszynę, skonfigurujemy jego role, wskażemy wcześniej skonfigurowany klaster, czy określimy zasoby dla niej dostępne
+tj. VCPU, Pamięć, czy Dysk. Docelowo skonfigurujemy także interfejsy sieciowe, określimy uruchomione usługi, załączymy zdjęcia
+przygotowanej maszyny, czy określimy osoby kontaktowe.
+
+![40-virtual-machine.png](/assets/images/netbox/40-virtual-machine.png)
 
 
