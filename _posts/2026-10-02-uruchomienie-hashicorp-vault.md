@@ -195,7 +195,7 @@ sudo install -o vault -g vault -m 0640 vault.key /opt/vault/tls/vault.key
 Po zmianie plików należy ponownie uruchomić Vaulta i sprawdzić konfigurację. Urządzenia klienckie muszą ufać własnemu CA,
 aby poprawnie zweryfikować certyfikat usługi.
 
-Katalog z certyfikatem oraz sam klucz prywatny muszą być dostępne dla użytkownika `vault`, ale nie dla innych użytkowników
+Katalog z certyfikatem oraz sam klucz prywatny, muszą być dostępne dla użytkownika `vault`, ale nie dla innych użytkowników
 systemu. Przed uruchomieniem usługi sprawdzam konfigurację oraz podstawowe wymagania systemowe poleceniem
 `vault operator diagnose`:
 
